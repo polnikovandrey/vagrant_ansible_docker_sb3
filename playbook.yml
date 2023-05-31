@@ -1,0 +1,40 @@
+---
+- name: Preconfig machines
+  hosts: leader, manager, worker
+  roles:
+    - role: preconfig
+      tags: preconfig
+
+- name: Swarm init
+  hosts: leader
+  roles:
+    - role: swarm_init
+      tags: swarm_init
+
+- name: Docker overlay network init
+  hosts: leader
+  roles:
+    - role: docker_network_init
+      tags: docker_network_init
+
+- name: Swarm join manager
+  hosts: manager
+  roles:
+    - role: swarm_join
+      tags: swarm_join
+      type: manager
+
+- name: Swarm join worker
+  hosts: worker
+  roles:
+    - role: swarm_join
+      tags: swarm_join
+      type: worker
+
+- name: Build and deploy a leader
+  hosts: leader
+  roles:
+    - role: build
+      tags: build
+    - role: deploy
+      tags: deploy

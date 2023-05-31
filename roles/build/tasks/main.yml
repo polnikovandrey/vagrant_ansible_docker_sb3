@@ -1,0 +1,37 @@
+---
+- name: Создание локального docker registry сервиса
+  docker_swarm_service:
+    name: registry
+    image: "registry:latest"
+    placement:
+      constraints:
+        - node.role == manager
+    publish:
+      - mode: ingress
+        protocol: tcp
+        published_port: 5000
+        target_port: 5000
+    state: present
+
+- name: Клонируем git репозиторий во временный локальный для сборки сервисов
+  ansible.builtin.git:
+    repo: "https://polnikov_andrey@bitbucket.org/polnikov_andrey/vagrant_ansible_docker_sb3.git"
+    dest: "{{ git_folder }}"
+    version: master
+
+- name: Собираем docker image сервисов из локального git репозитория
+  community.docker.docker_image:
+    name: "{{ docker_local_registry_name }}{{ item.name }}"
+    tag: "{{ item.version }}"
+    push: true
+    force_source: true
+    force_tag: true
+    build:
+      path: "{{ git_folder }}/services/{{ item.name }}"
+    source: build
+  loop: "{{ services | selectattr('build', 'equalto', true) }}"
+
+- name: Удаляем локальный git репозиторий
+  file:
+    state: absent
+    path: "{{ git_folder }}"

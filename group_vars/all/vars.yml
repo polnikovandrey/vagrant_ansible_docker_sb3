@@ -1,0 +1,42 @@
+---
+docker_local_registry_name: "localhost:5000/"
+
+docker_swarm_advertise_addr: 10.11.10.2
+
+docker_overlay_network_name: docker-overlay-network
+
+services:
+  - name: auth-server
+    version: latest
+    manager: false
+    build: true
+  - name: auth-message-resource
+    version: latest
+    manager: false
+    build: true
+  - name: auth-client
+    version: latest
+    manager: false
+    build: true
+  - name: nginx
+    version: latest
+    manager: true
+    build: false
+
+#rmq_defaults:
+#  - name: AMQP_EXCHANGE
+#    value: xchg_integrations
+#  - name: AMQP_USER
+#    value: "{{rmq.user}}"
+#  - name: AMQP_PASSWORD
+#    value: "{{rmq.password}}"
+#  - name: AMQP_HOSTNAME
+#    value: rmq
+
+#services:
+#  - name: rmq
+#    version: 3-management
+#
+#non_build_services:
+#  - name: rmq
+#    version: 3-management

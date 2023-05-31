@@ -1,0 +1,10 @@
+galaxy_info:
+  role_name: build
+  description: Сборка моно репозитория
+  author: Andrey Polnikov
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all

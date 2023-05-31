@@ -1,0 +1,36 @@
+---
+- name: Sleep for 30 seconds before nginx deployment
+  ansible.builtin.wait_for:
+    timeout: 30
+  delegate_to: localhost
+- name: "[{{ name }}] Конфигурация конфига"
+  include_tasks:
+    file: ../config.yml
+  loop:
+    - nginx.conf
+  loop_control:
+    loop_var: config_item
+
+- name: "[{{ name }}] Выкладка конфига"
+  block:
+    - name: "[{{ name }}] Выкладываем конфиг"
+      community.docker.docker_swarm_service:
+        debug: true
+        name: "{{ name }}"
+        image: "nginx:{{ version }}"
+        state: present
+        networks:
+          - name: "{{ docker_overlay_network_name }}"
+        publish:
+          - mode: ingress
+            protocol: tcp
+            published_port: 8080
+            target_port: 8080
+          - mode: ingress
+            protocol: tcp
+            published_port: 9000
+            target_port: 9000
+        configs:
+          - config_name: nginx.conf
+            filename: "/etc/nginx/nginx.conf"
+  tags: "{{ name }}"
