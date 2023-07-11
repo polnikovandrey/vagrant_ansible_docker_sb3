@@ -43,6 +43,7 @@ deploy for 30 seconds to allow other services become initialized within a swarm 
 ----
 127.0.0.1 auth-server
 127.0.0.1 auth-client
+127.0.0.1 auth-message-resource
 ----
 
 === Run
